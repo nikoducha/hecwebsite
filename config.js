@@ -6,5 +6,5 @@ window.HEC_CONFIG = {
   // Shown on the pay button. The real amount is COURSE_PRICE_CHF_CENTS in the Supabase function secrets.
   // true = paywall OFF (everyone signed in can open the courses). Set to false to charge again.
   FREE_ACCESS: false,
-  PRICE_LABEL: 'CHF 15'
+  PRICE_LABEL: 'CHF 1'
 };
