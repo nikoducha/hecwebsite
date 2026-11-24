@@ -121,7 +121,7 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
 <div class="top"><div class="wrap">
  <div class="brand"><i>H</i>HEC BSc1</div>
  <div id="langslot"></div>
- <div class="who" id="who" hidden><span id="whoname"></span><button class="ghost" id="signout" type="button" data-i18n="signout">Sign out</button></div>
+ <div class="who" id="who" hidden><span id="whoname"></span><a class="ghost" id="adminlink" href="admin.html" hidden style="text-decoration:none;color:inherit">Admin</a><button class="ghost" id="signout" type="button" data-i18n="signout">Sign out</button></div>
  <button class="themebtn" id="themebtn" type="button" data-i18n-label="theme" aria-label="Toggle light / dark theme">◐</button>
 </div></div>
 
@@ -217,6 +217,7 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
 
 <script src="i18n.js"></script>
 <script src="config.js"></script>
+<script src="track.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 (function(){
@@ -248,6 +249,7 @@ if(CONFIGURED&&window.supabase){
  sb=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 }
 var state={user:null,paid:false,confirming:false,ready:false};
+var T=window.HEC_TRACK?window.HEC_TRACK(sb,I.lang):function(){};
 
 /* ---------- helpers ---------- */
 function got(key){try{var s=JSON.parse(localStorage.getItem(key)||'{}');var g=s.got||{};return Object.keys(g).filter(function(k){return g[k]}).length}catch(e){return 0}}
@@ -279,6 +281,7 @@ async function refresh(){
  state.paid=await loadPaid();
  state.ready=true;
  render();
+ sb.rpc('is_admin').then(function(r){$('adminlink').hidden=!(r&&r.data===true)},function(){});
 }
 
 /* ---------- render ---------- */
@@ -337,6 +340,7 @@ $('form-in').addEventListener('submit',async function(ev){
  $('in-go').disabled=false;
  if(r.error)return say('in-msg',friendly(r.error));
  $('in-pass').value='';
+ T('login');
 });
 $('form-up').addEventListener('submit',async function(ev){
  ev.preventDefault();clear('up-msg');
@@ -356,12 +360,13 @@ $('form-up').addEventListener('submit',async function(ev){
   say('in-msg',t('confirm_sent',email),true);
  }
 });
-$('signout').addEventListener('click',async function(){if(sb)await sb.auth.signOut();state.user=null;state.paid=false;show('in');render();window.scrollTo(0,0)});
+$('signout').addEventListener('click',async function(){$('adminlink').hidden=true;if(sb)await sb.auth.signOut();state.user=null;state.paid=false;show('in');render();window.scrollTo(0,0)});
 
 /* ---------- payment ---------- */
 $('paybtn').addEventListener('click',async function(){
  clear('pay-msg');
  var btn=$('paybtn');btn.disabled=true;
+ T('pay_click');
  try{
   var s=(await sb.auth.getSession()).data.session;
   if(!s)throw new Error('signed out');
@@ -406,6 +411,7 @@ async function start(){
   if(CONFIGURED){$('setup-msg').textContent=t('load_fail');$('setup-msg').hidden=false}
   return}
  await refresh();
+ if(state.user)T('visit');
  var q=new URLSearchParams(location.search);
  if(q.get('paid')==='1'||q.get('canceled')==='1'||q.get('needpay')==='1'){
   history.replaceState(null,'',location.pathname);

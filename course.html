@@ -29,6 +29,7 @@ a{color:var(--acc);font-weight:700}
 </div>
 <script src="i18n.js"></script>
 <script src="config.js"></script>
+<script src="track.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 (async function(){
@@ -67,7 +68,32 @@ a{color:var(--acc);font-weight:700}
           if(x.error)throw x.error;var d=x.data;return {exists:!!d,data:function(){return d?{state:d.state,updated:d.updated}:undefined}}})},
         set:function(o){return sb.from('progress').upsert({user_id:uid,key:key,state:String(o.state),updated:o.updated||Date.now()}).then(function(x){if(x.error)throw x.error})}
       }}})}};
+  var T=window.HEC_TRACK?window.HEC_TRACK(sb,served):function(){};
+  T('course_open',{course:slug});
   document.open();document.write(html);document.close(); // replaces this page with the course
+  // Usage stats for the admin page: tab switches, sections marked "Got it", and one ping per active minute
+  // (with the tab and section on screen). document.open() clears listeners, so they are added here.
+  (function(){
+   var tab='notes',last=Date.now();
+   function where(el){var a=el&&el.closest&&el.closest('article.sec,[data-sec]'),tp=el&&el.closest&&el.closest('section.topic,[data-topic]');
+    var h=a&&a.querySelector('h3,h2'),th=tp&&tp.querySelector('header h2,h2');
+    return {label:h?h.textContent:null,topic:th?th.textContent:null}}
+   function onScreen(){var x=innerWidth/2,ys=[.35,.5,.2];for(var i=0;i<ys.length;i++){var el=document.elementFromPoint(x,innerHeight*ys[i]);var w=where(el);if(w.label)return w}return {}}
+   var sel=document.querySelector('[role=tab][aria-selected=true][data-tab]');if(sel)tab=sel.getAttribute('data-tab');
+   document.addEventListener('click',function(e){
+    last=Date.now();
+    var el=e.target&&e.target.closest&&e.target.closest('[role=tab][data-tab],.got[data-got]');if(!el)return;
+    if(el.hasAttribute('data-tab')){var tb=el.getAttribute('data-tab');if(tb!==tab){tab=tb;T('tab',{course:slug,detail:tb})}return}
+    setTimeout(function(){if(el.getAttribute('aria-pressed')==='true'){var w=where(el);T('got',{course:slug,detail:el.getAttribute('data-got'),label:w.label,topic:w.topic})}},0);
+   },true);
+   var bump=function(){last=Date.now()};
+   ['keydown','scroll','pointermove','touchstart'].forEach(function(ev){addEventListener(ev,bump,{passive:true,capture:true})});
+   setInterval(function(){
+    if(document.visibilityState!=='visible'||Date.now()-last>180000)return;
+    var w=tab==='notes'?onScreen():{};
+    T('ping',{course:slug,detail:tab,label:w.label,topic:w.topic});
+   },60000);
+  })();
  }catch(e){fail(t('c_net'))}
 })();
 </script>
