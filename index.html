@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&family=STIX+Two+Text:ital,wght@0,400;1,400&display=swap">
 <style>
-/* Layout: sign-in wall until a session exists; then the course grid, locked behind a monthly subscription (TWINT, Apple Pay or card) until the account subscribes. */
+/* Layout: sign-in wall until a session exists; then the course grid, locked behind a monthly subscription (Apple Pay or card) until the account subscribes. */
 :root{
  color-scheme:light;
  --bg:#f3efe2;--bg2:#e9e4d1;--card:#fbf9f1;--fg:#1d2a21;--fg2:#41503f;--fg3:#6b7767;--line:#d8d2bb;
@@ -35,7 +35,7 @@ button,input{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--acc);outline-offset:3px}
 .wrap{max-width:1180px;margin:0 auto}
-.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px))}
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px))}
 .top .wrap{display:flex;align-items:center;gap:12px}
 .brand{font:700 20px/1 var(--serif);letter-spacing:-.01em;display:flex;align-items:center;gap:10px;margin-right:auto}
 .brand i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--acc);color:var(--onacc);font:italic 700 17px var(--serif)}
@@ -47,7 +47,6 @@ button{cursor:pointer}
 main{padding-block:26px 70px}
 
 /* sign-in wall */
-.gate{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:stretch}
 .panel{background:linear-gradient(135deg,var(--herofrom),var(--heroto));color:#fff;border-radius:20px;padding:34px 34px 30px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:18px;min-width:0}
 .panel h1{font-size:clamp(30px,4.6vw,44px)}
 .panel p{margin:0;color:#e6f1e6;font-size:18px;max-width:46ch}
@@ -109,7 +108,7 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
 .open{font-weight:700;color:var(--acc)}
 .course.locked .open{color:var(--fg3);display:inline-flex;align-items:center;gap:6px}
 .note{margin-top:22px;font-size:14px;color:var(--fg3);max-width:70ch}
-@media(max-width:820px){.gate{grid-template-columns:minmax(0,1fr)}.panel{padding:26px 22px 24px}.formcard{align-self:stretch}.pay{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:820px){.pay{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.hero{padding:22px 20px}.grid{grid-template-columns:minmax(0,1fr)}.who span{display:none}.formcard{padding:22px 18px 24px}.pay{padding:20px 18px}}
 @media(prefers-reduced-motion:reduce){.course{transition:none}a.course:hover{transform:none}}
 .hec-lang{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
@@ -120,6 +119,132 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
 .brand,.ghost{white-space:nowrap}
 @media(max-width:560px){.top .wrap{gap:8px}.ghost{padding:6px 10px;font-size:14px}.themebtn{flex:none}}
 @media(max-width:430px){.brand{font-size:0;gap:0}.brand i{font-size:17px}}
+
+/* ---------- landing page (signed out) ---------- */
+.gate{display:flex;flex-direction:column;gap:clamp(64px,9vw,112px);padding-top:clamp(8px,3vw,28px)}
+.lhero{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,64px);align-items:center;min-height:min(640px,calc(100vh - 140px))}
+.lhero::before{content:"";position:absolute;inset:-70px -60px -40px;z-index:-1;pointer-events:none;
+ background:radial-gradient(520px 380px at 82% 42%,color-mix(in srgb,var(--acc) 22%,transparent),transparent 70%),
+ radial-gradient(420px 300px at 8% 10%,color-mix(in srgb,var(--ochre) 16%,transparent),transparent 70%),
+ linear-gradient(var(--line) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/44px 44px;
+ -webkit-mask-image:radial-gradient(ellipse 70% 75% at 50% 45%,#000 30%,transparent 80%);mask-image:radial-gradient(ellipse 70% 75% at 50% 45%,#000 30%,transparent 80%);opacity:.9}
+.lcopy{display:flex;flex-direction:column;gap:22px;min-width:0}
+.kicker{display:inline-flex;align-self:flex-start;align-items:center;gap:10px;margin:0;padding:6px 14px 6px 10px;border:1px solid var(--line);border-radius:99px;background:var(--card);font:700 13px var(--sans);letter-spacing:.04em;color:var(--fg2)}
+.kicker .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 22%,transparent);animation:pulse 2.4s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--acc) 0%,transparent)}}
+.lhero h1{font-size:clamp(40px,6.4vw,76px);line-height:1.02;letter-spacing:-.025em;font-weight:700}
+.lhero h1 em{display:block;font-style:italic;font-weight:500;color:var(--acc);position:relative}
+.lead{margin:0;font-size:clamp(18px,1.7vw,20.5px);color:var(--fg2);max-width:44ch;line-height:1.55}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.big{padding:14px 22px;font-size:17px;border-radius:14px;font-weight:700}
+.primary.big{box-shadow:0 10px 24px -12px color-mix(in srgb,var(--acc) 80%,transparent);transition:transform .2s,box-shadow .2s,background .2s}
+.primary.big:hover{transform:translateY(-2px);box-shadow:0 16px 30px -14px color-mix(in srgb,var(--acc) 90%,transparent)}
+.ghost.big{background:transparent}
+.trust{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.gate .gateprice{display:inline-flex;align-items:center;margin:0;padding:0;background:none;border:0;border-radius:0;color:var(--fg2)!important;font-weight:600;font-size:15px!important}
+.paywith{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.paywith li{font:700 12px var(--sans);letter-spacing:.03em;padding:4px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg2)}
+
+.lform{position:relative;min-width:0}
+.lform .formcard{position:relative;z-index:1;border-radius:24px;padding:28px 30px 30px;box-shadow:0 30px 60px -30px rgba(30,40,20,.35),var(--shadow);transition:box-shadow .3s}
+.lform .formcard.flash{box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 35%,transparent),0 30px 60px -30px rgba(30,40,20,.35)}
+.chip{position:absolute;z-index:2;display:flex;align-items:center;gap:8px;padding:7px 13px 7px 7px;border-radius:12px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);font:700 13.5px var(--sans);color:var(--fg2);white-space:nowrap;animation:float 7s ease-in-out infinite}
+.chip i{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--acc);color:var(--onacc);font:italic 700 15px var(--math)}
+.c1{top:-24px;left:-30px}.c2{top:-20px;right:8%;animation-delay:-2s}.c3{bottom:-22px;left:-18px;animation-delay:-4s}.c4{bottom:-18px;right:-26px;animation-delay:-5.5s}
+.c2 i,.c4 i{background:var(--ochre)}
+@keyframes float{50%{transform:translateY(-10px) rotate(-1.5deg)}}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:22px;background:var(--card);box-shadow:var(--shadow);overflow:hidden}
+.stats div{display:flex;flex-direction:column;gap:2px;padding:24px 26px;border-left:1px solid var(--line)}
+.stats div:first-child{border-left:0}
+.stats b{font:700 clamp(34px,4.4vw,50px)/1 var(--serif);color:var(--acc);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stats span{color:var(--fg3);font-size:15px;font-weight:600}
+
+.lsec{display:flex;flex-direction:column;gap:30px}
+.lhead{max-width:640px}
+.lhead h2,.democopy h2{font-size:clamp(30px,4vw,44px);letter-spacing:-.02em}
+.feats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.feat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px 22px;display:flex;flex-direction:column;gap:10px;transition:transform .25s,border-color .25s}
+.feat:hover{transform:translateY(-4px);border-color:var(--acc)}
+.feat h3{font-size:21px}
+.feat p{margin:0;color:var(--fg2);font-size:15.5px;line-height:1.55}
+.ico{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:var(--accbg);color:var(--acc);margin-bottom:6px}
+.ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+.demo{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,64px);align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:28px;padding:clamp(28px,5vw,56px)}
+.democopy{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.democopy p{margin:0;color:var(--fg2);max-width:40ch}
+.deckwrap{perspective:1400px;position:relative}
+.deckwrap::before,.deckwrap::after{content:"";position:absolute;inset:0;border-radius:22px;background:var(--card);border:1px solid var(--line);transform:rotate(3deg) translate(10px,8px);z-index:0}
+.deckwrap::after{transform:rotate(-2.5deg) translate(-8px,10px);opacity:.7}
+.fcard{position:relative;z-index:1;display:block;width:100%;aspect-ratio:16/10;border:0;padding:0;background:none;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,.7,.2,1);text-align:left}
+.fcard[aria-pressed="true"]{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;justify-content:center;padding:clamp(22px,4vw,40px);border-radius:22px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.face small{font:700 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ochre)}
+.face strong{font:600 clamp(21px,2.6vw,29px)/1.3 var(--serif);color:var(--fg)}
+.face em{font-style:normal;font-size:14px;color:var(--fg3);margin-top:auto}
+.back{transform:rotateY(180deg);background:linear-gradient(135deg,var(--herofrom),var(--heroto));border-color:transparent}
+.back strong{color:#fff;font-family:var(--sans);font-weight:600;font-size:clamp(18px,2.1vw,23px);line-height:1.45}
+.back small{color:#f3d58a}
+
+.cat{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.semcol{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px 24px 10px}
+.semcol h3{font-size:22px;display:flex;align-items:baseline;justify-content:space-between;padding-bottom:12px;border-bottom:1.5px solid var(--line)}
+.semcol h3 span{font:600 13.5px var(--sans);color:var(--fg3)}
+.semcol ul{list-style:none;margin:0;padding:0}
+.semcol li{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.semcol li:last-child{border-bottom:0}
+.semcol .g{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:var(--accbg);color:var(--acc);font:italic 700 20px var(--math);transition:background .2s,color .2s}
+.semcol li:hover .g{background:var(--acc);color:var(--onacc)}
+.semcol .nm{font-weight:700;color:var(--fg)}
+.semcol .tl{margin-left:auto;font-size:13px;color:var(--fg3);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;counter-reset:st}
+.steps li{counter-increment:st;position:relative;padding:62px 24px 24px;border-radius:20px;border:1px solid var(--line);background:var(--card)}
+.steps li::before{content:counter(st);position:absolute;top:20px;left:24px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--acc);color:var(--onacc);font:700 15px var(--sans)}
+.steps h3{font-size:21px;margin-bottom:6px}
+.steps p{margin:0;color:var(--fg2);font-size:15.5px}
+
+.qs{display:flex;flex-direction:column;gap:10px;max-width:820px}
+.qs details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:0 22px;transition:border-color .2s}
+.qs details[open]{border-color:var(--acc)}
+.qs summary{cursor:pointer;list-style:none;padding:18px 0;font-weight:700;font-size:17.5px;display:flex;justify-content:space-between;gap:16px}
+.qs summary::-webkit-details-marker{display:none}
+.qs summary::after{content:"+";font:400 26px/1 var(--sans);color:var(--acc);transition:transform .25s}
+.qs details[open] summary::after{transform:rotate(45deg)}
+.qs details p{margin:0 0 18px;color:var(--fg2);max-width:68ch}
+
+.final{position:relative;overflow:hidden;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;padding:clamp(40px,7vw,72px) 24px;border-radius:28px;background:linear-gradient(135deg,var(--herofrom),var(--heroto));color:#fff}
+.final::before{content:"σ ∫ Σ λ ∂ μ β ε §";position:absolute;inset:auto -5% -30px;font:italic 700 120px/1 var(--math);letter-spacing:.3em;white-space:nowrap;color:rgba(255,255,255,.06);pointer-events:none}
+.final h2{font-size:clamp(30px,4.4vw,48px);position:relative}
+.final p{margin:0 0 8px;color:#e6f1e6;font-size:18px;position:relative}
+.primary.inv{background:#fff;color:var(--herofrom);position:relative}
+.primary.inv:hover{background:#f3efe2}
+:root[data-theme="dark"] .primary.inv{background:var(--acc);color:var(--onacc)}
+.lfoot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding:22px 0 0;margin-top:-40px;border-top:1px solid var(--line);font-size:13.5px;color:var(--fg3)}
+
+/* scroll reveal (only when JS is on and motion is OK) */
+.anim .rv{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.anim .rv.in{opacity:1;transform:none}
+
+@media(max-width:980px){.feats{grid-template-columns:1fr 1fr}.c1,.c3{left:-8px}.c4{right:-8px}}
+@media(max-width:860px){
+ .lhero{grid-template-columns:minmax(0,1fr);min-height:0}.lhero::before{inset:-70px -14px -40px}
+ .lform{max-width:520px;width:100%;justify-self:center}
+ .demo{grid-template-columns:minmax(0,1fr)}
+ .cat{grid-template-columns:minmax(0,1fr)}
+ .stats{grid-template-columns:1fr 1fr}.stats div:nth-child(3){border-left:0}.stats div:nth-child(n+3){border-top:1px solid var(--line)}
+}
+@media(max-width:560px){
+ .feats{grid-template-columns:minmax(0,1fr)}
+ .chip{display:none}
+ .lform .formcard{padding:22px 18px 24px}
+ .stats div{padding:18px}
+ .ctas .big{flex:1 1 100%}
+ .semcol{padding:18px 16px 6px}
+ .lfoot{margin-top:-30px}
+}
+@media(prefers-reduced-motion:reduce){.chip,.kicker .dot{animation:none}.fcard{transition:none}.feat,.primary.big{transition:none}}
 </style>
 </head>
 <body>
@@ -132,74 +257,180 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
 </div></div>
 
 <main class="wrap">
- <!-- shown only while nobody is signed in -->
- <section class="gate" id="gate" aria-label="Sign in" hidden>
-  <div class="panel">
-   <h1 data-i18n="gate_h1">Your first year at HEC, one account.</h1>
-   <p class="gateprice" id="gateprice"></p>
-   <p data-i18n="gate_p">Notes, step-by-step exercises, flashcards and timed past papers for all twelve courses. Create an account or log in to continue.</p>
-   <div class="facts">
-    <div><b>12</b><span data-i18n="f_courses">courses</span></div>
-    <div><b>914</b><span data-i18n="f_sections">sections</span></div>
-    <div><b>157</b><span data-i18n="f_cards">accounting flashcards</span></div>
-    <div><b>6</b><span data-i18n="f_papers">past papers</span></div>
-   </div>
-   <svg viewBox="0 0 200 200" aria-hidden="true"><path d="M30 60 L100 30 L170 60 L100 90 Z" stroke="#fff" stroke-width="7" fill="none" stroke-linejoin="round"/><path d="M60 75 V120 C60 140 140 140 140 120 V75 M170 60 V110" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/></svg>
-  </div>
-  <div class="formcard">
-   <p class="eyebrow" id="formeyebrow" data-i18n="welcome_back">Welcome back</p>
-   <div class="seg" role="tablist" aria-label="Account" data-i18n-label="account">
-    <button type="button" role="tab" id="tab-in" aria-selected="true" aria-controls="form-in" data-i18n="login">Log in</button>
-    <button type="button" role="tab" id="tab-up" aria-selected="false" aria-controls="form-up" data-i18n="signup">Sign up</button>
-   </div>
-   <div class="msg" id="setup-msg" role="alert" hidden><span data-i18n="setup">The backend is not connected yet. Fill in site/config.js with your Supabase project URL and anon key.</span></div>
+ <!-- shown only while nobody is signed in: the landing page -->
+ <div class="gate" id="gate" hidden>
 
-   <form id="form-in" novalidate aria-labelledby="tab-in">
-    <label for="in-email"><span data-i18n="email">Email</span>
-     <input id="in-email" type="email" autocomplete="email" inputmode="email" required>
-    </label>
-    <label for="in-pass"><span data-i18n="password">Password</span>
-     <input id="in-pass" type="password" autocomplete="current-password" required>
-    </label>
-    <div class="msg" id="in-msg" role="alert" hidden></div>
-    <button class="primary" type="submit" id="in-go" data-i18n="login">Log in</button>
-    <p class="switch"><span data-i18n="new_here">New here?</span> <button type="button" data-go="up" data-i18n="create_an_account">Create an account</button></p>
-   </form>
+  <section class="lhero" aria-labelledby="gate-h1">
+   <div class="lcopy">
+    <p class="kicker rv"><span class="dot" aria-hidden="true"></span><span data-i18n="l_kicker">HEC Lausanne · Bachelor, first year</span></p>
+    <h1 id="gate-h1" class="rv"><span data-i18n="l_h1a">Your first year at HEC,</span> <em data-i18n="l_h1b">finally in order.</em></h1>
+    <p class="lead rv" data-i18n="l_lead">Clear notes, step-by-step exercises, flashcards and timed past papers for the main BSc1 courses. One account, every device.</p>
+    <div class="ctas rv">
+     <button type="button" class="primary big" data-go="up"><span data-i18n="l_cta">Create your account</span> <span aria-hidden="true">→</span></button>
+     <button type="button" class="ghost big" data-go="in" data-i18n="l_have">I already have an account</button>
+    </div>
+    <div class="trust rv">
+     <p class="gateprice" id="gateprice"></p>
+     <ul class="paywith paidonly" aria-label="Payment methods"><li>Apple Pay</li><li data-i18n="l_card">Card</li></ul>
+    </div>
+   </div>
 
-   <form id="form-up" novalidate hidden aria-labelledby="tab-up">
-    <label for="up-name"><span data-i18n="first_name">First name</span>
-     <input id="up-name" type="text" autocomplete="given-name" required>
-    </label>
-    <label for="up-email"><span data-i18n="email">Email</span>
-     <input id="up-email" type="email" autocomplete="email" inputmode="email" required>
-    </label>
-    <label for="up-pass"><span data-i18n="password">Password</span>
-     <input id="up-pass" type="password" autocomplete="new-password" minlength="8" required>
-     <span class="hint" data-i18n="hint_pw">At least 8 characters.</span>
-    </label>
-    <label for="up-pass2"><span data-i18n="repeat_password">Repeat password</span>
-     <input id="up-pass2" type="password" autocomplete="new-password" required>
-    </label>
-    <div class="msg" id="up-msg" role="alert" hidden></div>
-    <button class="primary" type="submit" id="up-go" data-i18n="create_account">Create account</button>
-    <p class="switch"><span data-i18n="already">Already registered?</span> <button type="button" data-go="in" data-i18n="login">Log in</button></p>
-   </form>
-  </div>
- </section>
+   <div class="lform">
+    <div class="chip c1" aria-hidden="true"><i>σ</i>Statistics</div>
+    <div class="chip c2" aria-hidden="true"><i>Σ</i>Accounting</div>
+    <div class="chip c3" aria-hidden="true"><i>∂</i>Maths II</div>
+    <div class="chip c4" aria-hidden="true"><i>λ</i>Python</div>
+    <div class="formcard" id="formcard">
+     <p class="eyebrow" id="formeyebrow" data-i18n="welcome_back">Welcome back</p>
+     <div class="seg" role="tablist" aria-label="Account" data-i18n-label="account">
+      <button type="button" role="tab" id="tab-in" aria-selected="true" aria-controls="form-in" data-i18n="login">Log in</button>
+      <button type="button" role="tab" id="tab-up" aria-selected="false" aria-controls="form-up" data-i18n="signup">Sign up</button>
+     </div>
+     <div class="msg" id="setup-msg" role="alert" hidden><span data-i18n="setup">The backend is not connected yet. Fill in site/config.js with your Supabase project URL and anon key.</span></div>
+
+     <form id="form-in" novalidate aria-labelledby="tab-in">
+      <label for="in-email"><span data-i18n="email">Email</span>
+       <input id="in-email" type="email" autocomplete="email" inputmode="email" required>
+      </label>
+      <label for="in-pass"><span data-i18n="password">Password</span>
+       <input id="in-pass" type="password" autocomplete="current-password" required>
+      </label>
+      <div class="msg" id="in-msg" role="alert" hidden></div>
+      <button class="primary" type="submit" id="in-go" data-i18n="login">Log in</button>
+      <p class="switch"><span data-i18n="new_here">New here?</span> <button type="button" data-go="up" data-i18n="create_an_account">Create an account</button></p>
+     </form>
+
+     <form id="form-up" novalidate hidden aria-labelledby="tab-up">
+      <label for="up-name"><span data-i18n="first_name">First name</span>
+       <input id="up-name" type="text" autocomplete="given-name" required>
+      </label>
+      <label for="up-email"><span data-i18n="email">Email</span>
+       <input id="up-email" type="email" autocomplete="email" inputmode="email" required>
+      </label>
+      <label for="up-pass"><span data-i18n="password">Password</span>
+       <input id="up-pass" type="password" autocomplete="new-password" minlength="8" required>
+       <span class="hint" data-i18n="hint_pw">At least 8 characters.</span>
+      </label>
+      <label for="up-pass2"><span data-i18n="repeat_password">Repeat password</span>
+       <input id="up-pass2" type="password" autocomplete="new-password" required>
+      </label>
+      <div class="msg" id="up-msg" role="alert" hidden></div>
+      <button class="primary" type="submit" id="up-go" data-i18n="create_account">Create account</button>
+      <p class="switch"><span data-i18n="already">Already registered?</span> <button type="button" data-go="in" data-i18n="login">Log in</button></p>
+     </form>
+    </div>
+   </div>
+  </section>
+
+  <section class="stats rv" aria-label="In numbers">
+   <div><b data-count="courses">12</b><span data-i18n="f_courses">courses</span></div>
+   <div><b data-count="sections">914</b><span data-i18n="l_f_sections">sections of notes</span></div>
+   <div><b data-count="cards">10</b><span data-i18n="l_f_cards">courses with flashcards</span></div>
+   <div><b data-count="papers">11</b><span data-i18n="l_f_papers">courses with past papers</span></div>
+  </section>
+
+  <section class="lsec" aria-labelledby="feat-h">
+   <div class="lhead rv">
+    <p class="eyebrow" data-i18n="l_feat_eb">What's inside</p>
+    <h2 id="feat-h" data-i18n="l_feat_h">Everything you need for each exam, in one place</h2>
+   </div>
+   <div class="feats">
+    <article class="feat rv">
+     <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h10l4 4v12H5z"/><path d="M15 4v4h4M8 12h8M8 16h6"/></svg></span>
+     <h3 data-i18n="l_f1_h">Notes that make sense</h3>
+     <p data-i18n="l_f1_p">Every chapter rewritten in plain words, with a worked example for each formula and a figure wherever a picture helps.</p>
+    </article>
+    <article class="feat rv">
+     <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18l5-5 4 4 7-8"/><path d="M15 9h5v5"/></svg></span>
+     <h3 data-i18n="l_f2_h">Step-by-step exercises</h3>
+     <p data-i18n="l_f2_p">Worked solutions that show every line of the calculation, so you can see exactly where you went wrong.</p>
+    </article>
+    <article class="feat rv">
+     <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v10"/></svg></span>
+     <h3 data-i18n="l_f3_h">Flashcards and mini tests</h3>
+     <p data-i18n="l_f3_p">Quick rounds to check what stuck. Mark sections “Got it” and watch your progress bar fill up.</p>
+    </article>
+    <article class="feat rv">
+     <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span>
+     <h3 data-i18n="l_f4_h">Timed past papers</h3>
+     <p data-i18n="l_f4_p">Past exam papers against the clock, so the real exam feels like one more practice run.</p>
+    </article>
+   </div>
+  </section>
+
+  <section class="lsec demo" aria-labelledby="demo-h">
+   <div class="democopy rv">
+    <p class="eyebrow" data-i18n="l_demo_eb">Try it</p>
+    <h2 id="demo-h" data-i18n="l_demo_h">A taste of the flashcards</h2>
+    <p data-i18n="l_demo_p">Tap the card to see the answer. Inside, most courses have their own deck.</p>
+    <button type="button" class="ghost" id="demonext"><span data-i18n="l_demo_next">Next card</span> <span aria-hidden="true">↻</span></button>
+   </div>
+   <div class="deckwrap rv">
+    <button type="button" class="fcard" id="fcard" aria-pressed="false">
+     <span class="face front"><small id="fc-tag"></small><strong id="fc-q"></strong><em data-i18n="l_demo_tap">Tap to flip</em></span>
+     <span class="face back"><small id="fc-tag2"></small><strong id="fc-a"></strong></span>
+    </button>
+   </div>
+  </section>
+
+  <section class="lsec" aria-labelledby="cat-h">
+   <div class="lhead rv">
+    <p class="eyebrow" data-i18n="l_cat_eb">The courses</p>
+    <h2 id="cat-h" data-i18n="l_cat_h">The main courses, both semesters</h2>
+   </div>
+   <div class="cat rv" id="catalog"></div>
+  </section>
+
+  <section class="lsec" aria-labelledby="how-h">
+   <div class="lhead rv">
+    <p class="eyebrow" data-i18n="l_how_eb">How it works</p>
+    <h2 id="how-h" data-i18n="l_how_h">Up and running in two minutes</h2>
+   </div>
+   <ol class="steps">
+    <li class="rv"><h3 data-i18n="l_s1_h">Create your account</h3><p data-i18n="l_s1_p">Your first name, your email and a password. That's it.</p></li>
+    <li class="rv paidonly"><h3 data-i18n="l_s2_h">Unlock every course</h3><p id="step2p"></p></li>
+    <li class="rv"><h3 data-i18n="l_s3_h">Study anywhere</h3><p data-i18n="l_s3_p">Open your courses on your phone, tablet or laptop, in English or French.</p></li>
+   </ol>
+  </section>
+
+  <section class="lsec faq" aria-labelledby="faq-h">
+   <div class="lhead rv">
+    <p class="eyebrow" data-i18n="l_faq_eb">Questions</p>
+    <h2 id="faq-h" data-i18n="l_faq_h">Good to know</h2>
+   </div>
+   <div class="qs">
+    <details class="rv"><summary data-i18n="l_q1">Is this official HEC material?</summary><p data-i18n="l_a1">No. Nothing here is official HEC material. The content is built from student notes and from publicly available questions and examples. The site is made by an HEC Lausanne student, isn't affiliated with HEC Lausanne or UNIL, and doesn't replace your lectures.</p></details>
+    <details class="rv paidonly"><summary data-i18n="l_q2">How much does it cost?</summary><p id="faqprice"></p></details>
+    <details class="rv"><summary data-i18n="l_q3">Which languages are available?</summary><p data-i18n="l_a3">The site works in English and French. Courses are written in English first, and French versions are added course by course.</p></details>
+    <details class="rv"><summary data-i18n="l_q4">Does it work on my phone?</summary><p data-i18n="l_a4">Yes. Log in from any phone, tablet or computer. Progress bars are saved separately on each device.</p></details>
+   </div>
+  </section>
+
+  <section class="final rv">
+   <h2 data-i18n="l_final_h">Exams come faster than you think.</h2>
+   <p data-i18n="l_final_p">Start with one chapter tonight.</p>
+   <button type="button" class="primary big inv" data-go="up"><span data-i18n="l_cta">Create your account</span> <span aria-hidden="true">→</span></button>
+  </section>
+
+  <footer class="lfoot">
+   <span>© 2026 HEC BSc1 Study Hub</span>
+   <span data-i18n="l_foot">Independent study aid built from student notes · not official HEC material</span>
+  </footer>
+ </div>
 
  <!-- signed in -->
  <section id="hub" hidden>
   <div class="hero">
    <h1 id="hello">HEC Lausanne, first year</h1>
-   <p data-i18n="hub_p">All twelve course summaries in one place. Each one has notes, step-by-step exercises and a progress tracker; most add flashcards, mini tests and timed past papers.</p>
+   <p data-i18n="hub_p">Summaries of the main first-year courses in one place. Each one has notes, step-by-step exercises and a progress tracker; most add flashcards, mini tests and timed past papers.</p>
    <svg viewBox="0 0 200 200" aria-hidden="true"><path d="M30 60 L100 30 L170 60 L100 90 Z" stroke="#fff" stroke-width="7" fill="none" stroke-linejoin="round"/><path d="M60 75 V120 C60 140 140 140 140 120 V75 M170 60 V110" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/></svg>
   </div>
 
   <section class="pay" id="pay" aria-label="Unlock the courses" hidden>
    <div>
     <p class="eyebrow" data-i18n="unlock">Unlock the courses</p>
-    <h2 data-i18n="pay_h2">One payment opens all twelve courses</h2>
-    <p data-i18n="pay_p">Pay once with TWINT, Apple Pay or card. Your courses open as soon as the payment goes through, on every device you log in from.</p>
+    <h2 data-i18n="pay_h2">One subscription opens every course</h2>
+    <p data-i18n="pay_p">Pay with Apple Pay or card. Your courses open as soon as the payment goes through, on every device you log in from.</p>
    </div>
    <div class="paybox">
     <div class="price"><span id="price">CHF 2</span><small data-i18n="one_time">per month · cancel any time</small></div>
@@ -289,6 +520,9 @@ async function loadPaid(){
 async function refresh(){
  var s=(await sb.auth.getSession()).data.session;
  if(!s){state.user=null;state.paid=false;state.ready=true;render();return}
+ /* the saved login can outlive its server session: check it, and log out locally if the server rejects it */
+ var chk=await sb.auth.getUser();
+ if(chk.error&&chk.error.status>=400&&chk.error.status<500){try{await sb.auth.signOut({scope:'local'})}catch(e){}state.user=null;state.paid=false;state.ready=true;render();return}
  var u=s.user;
  state.user={id:u.id,email:u.email,name:(u.user_metadata&&u.user_metadata.full_name)||String(u.email||'').split('@')[0]};
  state.paid=await loadPaid();
@@ -344,7 +578,7 @@ function show(which){
 }
 $('tab-in').addEventListener('click',function(){show('in')});
 $('tab-up').addEventListener('click',function(){show('up')});
-document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('click',function(){var w=b.getAttribute('data-go');show(w);$(w==='up'?'up-name':'in-email').focus()})});
+document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('click',function(){goForm(b.getAttribute('data-go'))})});
 var EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 $('form-in').addEventListener('submit',async function(ev){
@@ -427,9 +661,81 @@ async function waitForPayment(){
  }else{render()}
 }
 
+/* ---------- landing page ---------- */
+var REDUCE=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function hasTab(c,list){return c.tabs.some(function(x){return list.indexOf(x)>=0})}
+var STATS={
+ courses:COURSES.length,
+ sections:COURSES.reduce(function(a,c){return a+c.sections},0),
+ cards:COURSES.filter(function(c){return hasTab(c,['Flashcards','Study tools'])}).length,
+ papers:COURSES.filter(function(c){return hasTab(c,['Past papers','Exams'])}).length
+};
+function setStats(f){document.querySelectorAll('[data-count]').forEach(function(b){var n=STATS[b.getAttribute('data-count')];b.textContent=String(Math.round(n*f))})}
+setStats(1);
+var counted=false;
+function countUp(){
+ if(counted||REDUCE)return;counted=true;
+ var t0=performance.now(),dur=1300;
+ (function step(now){var p=Math.min(1,(now-t0)/dur);setStats(1-Math.pow(1-p,3));if(p<1)requestAnimationFrame(step)})(t0);
+}
+function buildCatalog(){
+ var box=$('catalog');box.textContent='';
+ [[0,6,'sem1'],[6,COURSES.length,'sem2']].forEach(function(r){
+  var col=document.createElement('div');col.className='semcol';
+  var h=document.createElement('h3');h.textContent=t(r[2]);
+  var sp=document.createElement('span');sp.textContent=t('l_ncourses',r[1]-r[0]);h.appendChild(sp);col.appendChild(h);
+  var ul=document.createElement('ul');
+  COURSES.slice(r[0],r[1]).forEach(function(c){
+   var li=document.createElement('li');li.innerHTML='<span class="g" aria-hidden="true"></span><span class="nm"></span><span class="tl"></span>';
+   li.querySelector('.g').textContent=c.glyph;li.querySelector('.nm').textContent=t('n:'+c.slug);li.querySelector('.tl').textContent=t('l_tools',c.tabs.length);
+   ul.appendChild(li);
+  });
+  col.appendChild(ul);box.appendChild(col);
+ });
+}
+var DEMO=[['financial-accounting','l_d1q','l_d1a'],['statistics','l_d2q','l_d2a'],['economics','l_d3q','l_d3a'],['mathematics','l_d4q','l_d4a']],demoI=0;
+function faces(){var f=$('fcard').getAttribute('aria-pressed')==='true';$('fcard').querySelector('.front').setAttribute('aria-hidden',String(f));$('fcard').querySelector('.back').setAttribute('aria-hidden',String(!f))}
+function demo(){
+ var d=DEMO[demoI],tag=t('n:'+d[0]);
+ $('fc-tag').textContent=tag;$('fc-tag2').textContent=tag;$('fc-q').textContent=t(d[1]);$('fc-a').textContent=t(d[2]);faces();
+}
+$('fcard').addEventListener('click',function(){var c=$('fcard');c.setAttribute('aria-pressed',String(c.getAttribute('aria-pressed')!=='true'));faces()});
+$('demonext').addEventListener('click',function(){
+ var c=$('fcard'),was=c.getAttribute('aria-pressed')==='true';
+ c.setAttribute('aria-pressed','false');
+ setTimeout(function(){demoI=(demoI+1)%DEMO.length;demo()},was&&!REDUCE?350:0);
+});
+function landing(){
+ var price=CFG.PRICE_LABEL||'',free=CFG.FREE_ACCESS===true||!price;
+ document.querySelectorAll('.paidonly').forEach(function(e){e.hidden=free});
+ $('step2p').textContent=t('l_s2_p',price);$('faqprice').textContent=t('l_a2',price);
+ buildCatalog();demo();
+}
+function goForm(w){
+ show(w);
+ var fc=$('formcard');
+ fc.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});
+ fc.classList.add('flash');setTimeout(function(){fc.classList.remove('flash')},900);
+ setTimeout(function(){$(w==='up'?'up-name':'in-email').focus({preventScroll:true})},REDUCE?0:450);
+}
+if(!REDUCE&&'IntersectionObserver' in window){
+ document.documentElement.classList.add('anim');setStats(0);
+ var io=new IntersectionObserver(function(es){es.forEach(function(e){
+  if(!e.isIntersecting)return;
+  e.target.classList.add('in');io.unobserve(e.target);
+  if(e.target.classList.contains('stats'))setTimeout(countUp,150);
+ })},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+ document.querySelectorAll('.rv').forEach(function(el){
+  var sib=[].filter.call(el.parentNode.children,function(x){return x.classList.contains('rv')});
+  el.style.transitionDelay=(sib.indexOf(el)*80)+'ms';
+  io.observe(el);
+ });
+}
+
 /* ---------- language ---------- */
 $('langslot').appendChild(I.switcher());
-window.HEC_ON_LANG=function(){I.apply();show(curForm);render()};
+window.HEC_ON_LANG=function(){I.apply();show(curForm);render();landing()};
+landing();
 I.apply();
 
 /* ---------- theme + start ---------- */
