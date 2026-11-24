@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&family=STIX+Two+Text:ital,wght@0,400;1,400&display=swap">
 <style>
-/* Layout: sign-in wall until a session exists; then the course grid, locked behind a one-time TWINT payment until the account is paid. */
+/* Layout: sign-in wall until a session exists; then the course grid, locked behind a monthly subscription (TWINT, Apple Pay or card) until the account subscribes. */
 :root{
  color-scheme:light;
  --bg:#f3efe2;--bg2:#e9e4d1;--card:#fbf9f1;--fg:#1d2a21;--fg2:#41503f;--fg3:#6b7767;--line:#d8d2bb;
@@ -81,6 +81,9 @@ input:focus{border-color:var(--acc)}
 .paybox{display:flex;flex-direction:column;gap:10px;align-items:stretch;min-width:230px}
 .price{font:700 34px/1 var(--serif);font-variant-numeric:tabular-nums}
 .price small{display:block;font:600 13.5px var(--sans);color:var(--fg3);margin-top:4px}
+.renew{margin:0;font-size:13px;line-height:1.45;color:var(--fg3);max-width:30ch}
+.gateprice{display:inline-flex;align-self:flex-start;align-items:center;gap:8px;margin:0;padding:7px 14px;border-radius:14px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff!important;font-weight:700;font-size:15.5px!important;position:relative}
+.subbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 18px;color:var(--fg2);font-weight:600;font-size:15px}
 .paying{display:flex;align-items:center;gap:12px}
 
 /* hub */
@@ -133,6 +136,7 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
  <section class="gate" id="gate" aria-label="Sign in" hidden>
   <div class="panel">
    <h1 data-i18n="gate_h1">Your first year at HEC, one account.</h1>
+   <p class="gateprice" id="gateprice"></p>
    <p data-i18n="gate_p">Notes, step-by-step exercises, flashcards and timed past papers for all twelve courses. Create an account or log in to continue.</p>
    <div class="facts">
     <div><b>12</b><span data-i18n="f_courses">courses</span></div>
@@ -198,8 +202,9 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
     <p data-i18n="pay_p">Pay once with TWINT, Apple Pay or card. Your courses open as soon as the payment goes through, on every device you log in from.</p>
    </div>
    <div class="paybox">
-    <div class="price"><span id="price">CHF 15</span><small data-i18n="one_time">one-time, no subscription</small></div>
-    <button class="primary" type="button" id="paybtn" data-i18n="pay_btn">Pay now</button>
+    <div class="price"><span id="price">CHF 2</span><small data-i18n="one_time">per month · cancel any time</small></div>
+    <button class="primary" type="button" id="paybtn">Subscribe for CHF 2 / month</button>
+    <p class="renew" data-i18n="renew_note">Renews every month until you cancel.</p>
     <div class="msg" id="pay-msg" role="alert" hidden></div>
    </div>
   </section>
@@ -211,6 +216,8 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
     <p id="confirming-text" data-i18n="confirming_p">This usually takes a few seconds. The courses unlock on their own.</p>
    </div>
   </section>
+
+  <div class="subbar" id="subbar" hidden><span id="subtxt"></span><button class="ghost" type="button" id="managebtn" data-i18n="manage">Manage or cancel subscription</button><div class="msg" id="sub-msg" role="alert" hidden></div></div>
 
   <p class="eyebrow" data-i18n="courses">Courses</p>
   <div class="grid" id="grid"></div>
@@ -251,7 +258,7 @@ var sb=null;
 if(CONFIGURED&&window.supabase){
  sb=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 }
-var state={user:null,paid:false,confirming:false,ready:false};
+var state={user:null,paid:false,sub:false,confirming:false,ready:false};
 var T=window.HEC_TRACK?window.HEC_TRACK(sb,I.lang):function(){};
 
 /* ---------- helpers ---------- */
@@ -272,9 +279,12 @@ function friendly(err){
 /* ---------- session + access ---------- */
 async function loadPaid(){
  if(CFG.FREE_ACCESS===true)return true; /* paywall switched off: any signed-in account gets in */
- var r=await sb.from('entitlements').select('plan').maybeSingle();
+ var r=await sb.from('entitlements').select('plan,status').maybeSingle();
  if(r.error){console.error(r.error);return false}
- return !!r.data;
+ var row=r.data;
+ /* no status = lifetime access (owner, admin, earlier one-time payment); otherwise the Stripe subscription status */
+ state.sub=!!(row&&row.status);
+ return !!row&&(!row.status||['active','trialing','past_due'].indexOf(row.status)>=0);
 }
 async function refresh(){
  var s=(await sb.auth.getSession()).data.session;
@@ -303,15 +313,20 @@ function buildGrid(open){
   grid.appendChild(el);
  });
 }
+function gatePrice(){var price=CFG.PRICE_LABEL||'';$('gateprice').textContent=t('gate_price',price);$('gateprice').hidden=!price||CFG.FREE_ACCESS===true}
 function render(){
- var signed=!!state.user;
+ var signed=!!state.user,price=CFG.PRICE_LABEL||'';
+ gatePrice();
  $('gate').hidden=signed||!state.ready&&CONFIGURED;
  $('hub').hidden=!signed;$('who').hidden=!signed;
  $('setup-msg').hidden=CONFIGURED;
  if(!signed){$('grid').textContent='';return}
  $('whoname').textContent=state.user.name;
  $('hello').textContent=state.paid?t('hello_back',state.user.name):t('hello',state.user.name);
- $('price').textContent=CFG.PRICE_LABEL||'';
+ $('price').textContent=price;
+ $('paybtn').textContent=t('pay_btn',price);
+ $('subtxt').textContent=t('sub_active',price);
+ $('subbar').hidden=!(state.paid&&state.sub);
  $('pay').hidden=state.paid||state.confirming;
  $('confirming').hidden=!state.confirming||state.paid;
  $('gridnote').hidden=!state.paid;
@@ -383,6 +398,21 @@ $('paybtn').addEventListener('click',async function(){
   say('pay-msg',t('pay_fail'));
  }
 });
+$('managebtn').addEventListener('click',async function(){
+ clear('sub-msg');
+ var btn=$('managebtn');btn.disabled=true;
+ try{
+  var s=(await sb.auth.getSession()).data.session;
+  if(!s)throw new Error('signed out');
+  var r=await fetch(FN+'/billing-portal',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:CFG.SUPABASE_ANON_KEY,'Content-Type':'application/json'}});
+  var d=await r.json().catch(function(){return {}});
+  if(!r.ok||!d.url)throw new Error('portal');
+  location.href=d.url; // Stripe's page; it links back here
+ }catch(e){
+  btn.disabled=false;
+  say('sub-msg',t('portal_fail'));
+ }
+});
 async function waitForPayment(){
  state.confirming=true;render();
  for(var i=0;i<20;i++){
@@ -410,6 +440,7 @@ $('themebtn').addEventListener('click',function(){
 });
 
 async function start(){
+ gatePrice();
  if(!sb){state.ready=true;$('gate').hidden=false;$('setup-msg').hidden=CONFIGURED;
   if(CONFIGURED){$('setup-msg').textContent=t('load_fail');$('setup-msg').hidden=false}
   return}
