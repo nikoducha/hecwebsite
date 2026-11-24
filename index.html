@@ -4,8 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>HEC BSc1 Study Hub</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&family=STIX+Two+Text:ital,wght@0,400;1,400&display=swap">
+<link rel="stylesheet" href="vendor/fonts.css">
 <style>
 /* Layout: sign-in wall until a session exists; then the course grid, locked behind a monthly subscription (Apple Pay or card) until the account subscribes. */
 :root{
@@ -221,6 +220,18 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
 .primary.inv{background:#fff;color:var(--herofrom);position:relative}
 .primary.inv:hover{background:#f3efe2}
 :root[data-theme="dark"] .primary.inv{background:var(--acc);color:var(--onacc)}
+.check{flex-direction:row;align-items:flex-start;gap:10px;font-weight:400;font-size:14.5px;line-height:1.45;color:var(--fg2)}
+.check input{width:18px;height:18px;margin:2px 0 0;flex:none;accent-color:var(--acc)}
+.check a,.lfoot a,.sitefoot a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.lfoot nav,.sitefoot nav{display:flex;flex-wrap:wrap;gap:6px 16px}
+.acct{margin:46px 0 0;padding:22px 0 0;border-top:1px solid var(--line);max-width:70ch}
+.acct h2{font-size:22px}
+.acct p{color:var(--fg2);font-size:15px;margin:8px 0 14px}
+.acct .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.danger{color:var(--err)!important;border-color:color-mix(in srgb,var(--err) 45%,var(--line))!important}
+.primary.danger{background:var(--err);color:var(--bg)!important;border:0}
+.primary.danger:hover{background:var(--err);filter:brightness(1.1)}
+.sitefoot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;margin:40px 0 28px;padding-top:18px;border-top:1px solid var(--line);font-size:13.5px;color:var(--fg3)}
 .lfoot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding:22px 0 0;margin-top:-40px;border-top:1px solid var(--line);font-size:13.5px;color:var(--fg3)}
 
 /* scroll reveal (only when JS is on and motion is OK) */
@@ -314,6 +325,7 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
       <label for="up-pass2"><span data-i18n="repeat_password">Repeat password</span>
        <input id="up-pass2" type="password" autocomplete="new-password" required>
       </label>
+      <label class="check" for="up-terms"><input id="up-terms" type="checkbox" required><span><span data-i18n="terms_pre">I am 16 or older and I accept the</span> <a href="legal.html#terms" data-i18n="terms_link">Terms</a> <span data-i18n="terms_mid">and the</span> <a href="legal.html#privacy" data-i18n="privacy_link">Privacy policy</a>.</span></label>
       <div class="msg" id="up-msg" role="alert" hidden></div>
       <button class="primary" type="submit" id="up-go" data-i18n="create_account">Create account</button>
       <p class="switch"><span data-i18n="already">Already registered?</span> <button type="button" data-go="in" data-i18n="login">Log in</button></p>
@@ -415,6 +427,7 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
   <footer class="lfoot">
    <span>© 2026 HEC BSc1 Study Hub</span>
    <span data-i18n="l_foot">Independent study aid built from student notes · not official HEC material</span>
+   <nav aria-label="Legal"><a href="legal.html#notice" data-i18n="legal">Legal notice</a><a href="legal.html#privacy" data-i18n="privacy">Privacy</a><a href="legal.html#terms" data-i18n="terms">Terms</a></nav>
   </footer>
  </div>
 
@@ -433,9 +446,10 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
     <p data-i18n="pay_p">Pay with Apple Pay or card. Your courses open as soon as the payment goes through, on every device you log in from.</p>
    </div>
    <div class="paybox">
-    <div class="price"><span id="price">CHF 2</span><small data-i18n="one_time">per month · cancel any time</small></div>
-    <button class="primary" type="button" id="paybtn">Subscribe for CHF 2 / month</button>
-    <p class="renew" data-i18n="renew_note">Renews every month until you cancel.</p>
+    <div class="price"><span id="price">CHF 2</span><small data-i18n="one_time">for 30 days · no automatic renewal</small></div>
+    <label class="check" for="pay-waiver"><input id="pay-waiver" type="checkbox" required><span><span data-i18n="waiver_pre">I want my access to start right away, and I understand that I therefore give up my right of withdrawal and that there are</span> <a href="legal.html#terms" data-i18n="waiver_link">no refunds</a>.</span></label>
+    <button class="primary" type="button" id="paybtn">Pay CHF 2 for 30 days</button>
+    <p class="renew" data-i18n="renew_note">Under 18? Ask a parent before you pay.</p>
     <div class="msg" id="pay-msg" role="alert" hidden></div>
    </div>
   </section>
@@ -453,13 +467,29 @@ a.course{transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s,bord
   <p class="eyebrow" data-i18n="courses">Courses</p>
   <div class="grid" id="grid"></div>
   <p class="note" id="gridnote" data-i18n="gridnote">Progress bars show the sections you marked “Got it” on this device.</p>
+
+  <section class="acct" aria-labelledby="acct-h">
+   <h2 id="acct-h" data-i18n="acct_h">Your account</h2>
+   <p data-i18n="acct_p">Deleting your account blocks sign-in straight away.</p>
+   <div class="row" id="delstart"><button class="ghost danger" type="button" id="delbtn" data-i18n="del_btn">Delete my account</button></div>
+   <div id="delconfirm" hidden>
+    <p data-i18n="del_warn">Are you sure?</p>
+    <div class="row"><button class="primary danger" type="button" id="delyes" data-i18n="del_yes">Yes, delete my account</button><button class="ghost" type="button" id="delno" data-i18n="del_no">Keep my account</button></div>
+   </div>
+   <div class="msg" id="del-msg" role="alert" hidden style="margin-top:12px"></div>
+  </section>
+
+  <footer class="sitefoot">
+   <span data-i18n="l_foot">Independent study aid built from student notes · not official HEC material</span>
+   <nav aria-label="Legal"><a href="legal.html#notice" data-i18n="legal">Legal notice</a><a href="legal.html#privacy" data-i18n="privacy">Privacy</a><a href="legal.html#terms" data-i18n="terms">Terms</a></nav>
+  </footer>
  </section>
 </main>
 
-<script src="i18n.js?v=20261124"></script>
+<script src="i18n.js?v=20261124b"></script>
 <script src="config.js"></script>
 <script src="track.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="vendor/supabase.min.js"></script>
 <script>
 (function(){
 'use strict';
@@ -489,7 +519,7 @@ var sb=null;
 if(CONFIGURED&&window.supabase){
  sb=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 }
-var state={user:null,paid:false,sub:false,confirming:false,ready:false};
+var state={user:null,paid:false,sub:false,until:null,confirming:false,ready:false};
 var T=window.HEC_TRACK?window.HEC_TRACK(sb,I.lang):function(){};
 
 /* ---------- helpers ---------- */
@@ -510,11 +540,14 @@ function friendly(err){
 /* ---------- session + access ---------- */
 async function loadPaid(){
  if(CFG.FREE_ACCESS===true)return true; /* paywall switched off: any signed-in account gets in */
- var r=await sb.from('entitlements').select('plan,status').maybeSingle();
+ var r=await sb.from('entitlements').select('plan,status,access_until').maybeSingle();
  if(r.error){console.error(r.error);return false}
  var row=r.data;
- /* no status = lifetime access (owner, admin, earlier one-time payment); otherwise the Stripe subscription status */
- state.sub=!!(row&&row.status);
+ /* access_until = 30-day pass (no renewal); no status = lifetime access (owner, admin, earlier one-time payment);
+    otherwise an older Stripe subscription and its status */
+ state.until=row&&row.access_until?new Date(row.access_until):null;
+ state.sub=!!(row&&row.status&&!row.access_until);
+ if(state.until)return state.until.getTime()>Date.now();
  return !!row&&(!row.status||['active','trialing','past_due'].indexOf(row.status)>=0);
 }
 async function refresh(){
@@ -559,8 +592,10 @@ function render(){
  $('hello').textContent=state.paid?t('hello_back',state.user.name):t('hello',state.user.name);
  $('price').textContent=price;
  $('paybtn').textContent=t('pay_btn',price);
- $('subtxt').textContent=t('sub_active',price);
- $('subbar').hidden=!(state.paid&&state.sub);
+ var pass=state.paid&&!!state.until;
+ $('subtxt').textContent=pass?t('pass_until',state.until.toLocaleDateString(I.lang==='fr'?'fr-CH':'en-GB',{day:'numeric',month:'long',year:'numeric'})):t('sub_active',price);
+ $('managebtn').hidden=!state.sub;
+ $('subbar').hidden=!(state.paid&&(state.sub||pass));
  $('pay').hidden=state.paid||state.confirming;
  $('confirming').hidden=!state.confirming||state.paid;
  $('gridnote').hidden=!state.paid;
@@ -602,6 +637,7 @@ $('form-up').addEventListener('submit',async function(ev){
  if(!EMAIL.test(email))return say('up-msg',t('v_email'));
  if(pw.length<8)return say('up-msg',t('v_len'));
  if(pw!==pw2)return say('up-msg',t('v_match'));
+ if(!$('up-terms').checked)return say('up-msg',t('v_terms'));
  $('up-go').disabled=true;
  var r=await sb.auth.signUp({email:email,password:pw,options:{data:{full_name:name},emailRedirectTo:location.origin+location.pathname}});
  $('up-go').disabled=false;
@@ -617,12 +653,13 @@ $('signout').addEventListener('click',async function(){$('adminlink').hidden=tru
 /* ---------- payment ---------- */
 $('paybtn').addEventListener('click',async function(){
  clear('pay-msg');
+ if(!$('pay-waiver').checked)return say('pay-msg',t('v_waiver'));
  var btn=$('paybtn');btn.disabled=true;
  T('pay_click');
  try{
   var s=(await sb.auth.getSession()).data.session;
   if(!s)throw new Error('signed out');
-  var r=await fetch(FN+'/create-checkout',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:CFG.SUPABASE_ANON_KEY,'Content-Type':'application/json'}});
+  var r=await fetch(FN+'/create-checkout',{method:'POST',headers:{Authorization:'Bearer '+s.access_token,apikey:CFG.SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({waiver:true})});
   var d=await r.json().catch(function(){return {}});
   if(d.alreadyPaid){await refresh();btn.disabled=false;return}
   if(!r.ok||!d.url)throw new Error('checkout');
@@ -646,6 +683,25 @@ $('managebtn').addEventListener('click',async function(){
   btn.disabled=false;
   say('sub-msg',t('portal_fail'));
  }
+});
+/* ---------- delete account ---------- */
+function delReset(){$('delconfirm').hidden=true;$('delstart').hidden=false;clear('del-msg')}
+$('delbtn').addEventListener('click',function(){
+ clear('del-msg');
+ if(state.sub)return say('del-msg',t('del_sub'));
+ $('delstart').hidden=true;$('delconfirm').hidden=false;$('delno').focus();
+});
+$('delno').addEventListener('click',function(){delReset();$('delbtn').focus()});
+$('delyes').addEventListener('click',async function(){
+ var btn=$('delyes');btn.disabled=true;clear('del-msg');
+ var r=await sb.rpc('request_account_deletion');
+ btn.disabled=false;
+ if(r.error){console.error(r.error);return say('del-msg',t('del_fail'))}
+ try{await sb.auth.signOut({scope:'local'})}catch(e){}
+ try{Object.keys(localStorage).filter(function(k){return k.indexOf('hec_theme')<0&&k.indexOf('hec_lang')<0}).forEach(function(k){localStorage.removeItem(k)})}catch(e){}
+ delReset();$('adminlink').hidden=true;
+ state.user=null;state.paid=false;state.sub=false;state.until=null;show('in');render();window.scrollTo(0,0);
+ say('in-msg',t('del_done'),true);
 });
 async function waitForPayment(){
  state.confirming=true;render();

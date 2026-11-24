@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>Admin · HEC BSc1 Study Hub</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="vendor/fonts.css">
 <style>
 :root{color-scheme:light;
  --bg:#f3efe2;--bg2:#e9e4d1;--card:#fbf9f1;--fg:#1d2a21;--fg2:#41503f;--fg3:#6b7767;--line:#d8d2bb;--grid:#e6e0cb;
@@ -198,7 +197,7 @@ tbody tr:hover{background:var(--bg2)}
 <div class="tip" id="tip" hidden></div>
 
 <script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="vendor/supabase.min.js"></script>
 <script>
 (function(){
 'use strict';
@@ -283,7 +282,7 @@ function render(){
   ['','Sections “Got it”',k.got,per],
   ['','New sign-ups',k.signups,per],
   ['','Accounts',k.accounts,num(k.confirmed)+' with confirmed email'],
-  ['','Paid accounts',k.paid,'CHF '+(k.revenue_cents/100).toFixed(2)+' in total']
+  ['','Paid accounts (access running)',k.paid,'CHF '+(k.revenue_cents/100).toFixed(2)+' in total']
  ];
  $('kpis').innerHTML=tiles.map(function(t){return '<div class="kpi '+t[0]+'"><span>'+t[1]+'</span><b>'+(typeof t[2]==='number'?num(t[2]):esc(t[2]))+'</b><small>'+esc(t[3])+'</small></div>'}).join('');
  renderDaily();renderCourses();renderTabs();renderTopics();
@@ -346,7 +345,8 @@ function renderUsers(){
  u.sort(function(a,b){var A=a[st.sort],B=b[st.sort];if(st.sort==='name'){A=who(a).toLowerCase();B=who(b).toLowerCase()}if(A==null&&B==null)return 0;if(A==null)return 1;if(B==null)return -1;return (A>B?1:A<B?-1:0)*st.dir});
  $('userssub').textContent=num(st.data.users.length)+' accounts · time, opens and “Got it” for the selected period';
  $('users').innerHTML=u.map(function(x){
-  var acc=x.is_admin?'<span class="pill">Admin</span>':x.plan&&x.plan!=='owner'?'<span class="pill p">Paid</span>':x.plan==='owner'?'<span class="pill">Free access</span>':'<span class="pill g">Not paid</span>';
+  var expired=x.access_until&&new Date(x.access_until).getTime()<=Date.now();
+  var acc=x.deleting?'<span class="pill g">Deleting</span>':x.is_admin?'<span class="pill">Admin</span>':x.plan&&x.plan!=='owner'?(expired?'<span class="pill g">Expired</span>':'<span class="pill p" title="'+(x.access_until?'until '+new Date(x.access_until).toLocaleDateString('en-GB'):'')+'">Paid</span>'):x.plan==='owner'?'<span class="pill">Free access</span>':'<span class="pill g">Not paid</span>';
   return '<tr><td><strong>'+esc(who(x))+'</strong><br><span class="muted">'+esc(x.email)+(x.confirmed?'':' · email not confirmed')+'</span></td><td>'+day(x.created_at)+'</td><td>'+ago(x.last_seen)+'</td><td class="n">'+mins(x.minutes)+'</td><td class="n">'+num(x.opens)+'</td><td class="n">'+num(x.got)+'</td><td>'+esc(x.top_course?cname(x.top_course):'—')+'</td><td>'+acc+'</td></tr>'}).join('')||'<tr><td colspan="8" class="empty">No users match.</td></tr>';
 }
 
