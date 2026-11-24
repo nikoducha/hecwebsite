@@ -5,7 +5,7 @@
 (function(){
  if(window.__hecNav)return;window.__hecNav=1;
  var D=document,R=D.documentElement,top=D.querySelector('.top');
- var HIDE_AFTER_DOWN=1200,HIDE_AFTER_UP=2500,TOP_ZONE=90;
+ var HIDE_AFTER_DOWN=3000,HIDE_AFTER_UP=3000,TOP_ZONE=90;
  var st=D.createElement('style');
  st.textContent=
   ':root{--hec-toph:58px}'+
