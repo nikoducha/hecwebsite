@@ -24,8 +24,36 @@
   '.hec-secs a.on b{background:var(--acc);border-color:var(--acc);color:var(--card)}'+
   '.hec-secs a.done b{background:var(--greenbg,var(--card));border-color:var(--green,var(--line));color:var(--green,var(--fg2))}'+
   '.sec,.glsec{scroll-margin-top:14px}'+
-  '@media(prefers-reduced-motion:reduce){.top,.hec-navwrap,.navwrap{transition:none}}';
+  '@media(prefers-reduced-motion:reduce){.top,.hec-navwrap,.navwrap{transition:none}}'+
+  /* course menu always above the rest of the header */
+  '.top .cmenu{z-index:50}.cm-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}'+
+  /* phones: header in two compact rows, chapter bars slimmer, course menu fits the screen */
+  '@media(max-width:700px){'+
+   '.top{padding-top:8px!important;padding-bottom:8px!important}'+
+   '.top .wrap{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto auto;gap:8px;align-items:center}'+
+   '.top .homelink{grid-area:1/1;width:38px;height:38px;padding:0;justify-content:center;font-size:0}'+
+   '.top .homelink::before{content:"\\2190";font-size:19px;line-height:1}'+
+   '.top .cmenu{grid-area:1/2;min-width:0;margin:0;font-size:17px}'+
+   '.top .cm-btn{max-width:100%;min-width:0;min-height:38px;gap:8px}'+
+   '.top .cm-btn i{flex:none;width:28px;height:28px}'+
+   '.top #hec-lang{grid-area:1/3}.top #hec-lang button{padding:8px 9px}'+
+   '.top .themebtn{grid-area:1/4;width:38px;height:38px}'+
+   '.top .tabs{grid-area:2/1/3/-1;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}'+
+   '.top .tabs::-webkit-scrollbar{display:none}'+
+   '.top .tabs button{flex:1 0 auto;white-space:nowrap;padding:8px 11px;font-size:14.5px}'+
+   '.top .ov-prog{display:none!important}'+
+   '.cm-pop{position:fixed!important;left:12px!important;right:12px!important;top:calc(env(safe-area-inset-top,0px) + var(--hec-toph) + 6px)!important;width:auto!important;max-width:none!important;max-height:calc(100vh - var(--hec-toph) - 30px);overflow-y:auto;overscroll-behavior:contain}'+
+   '.cm-pop a{padding:11px 10px}'+
+   '.hec-navwrap,.navwrap{margin-bottom:12px;border-radius:12px}'+
+   '.pagebar{padding:5px 6px!important;gap:2px!important;scrollbar-width:none}.pagebar::-webkit-scrollbar{display:none}'+
+   '.pagebar a{padding:4px 10px 4px 4px!important;font-size:13.5px!important;gap:6px!important}'+
+   '.pagebar .ring{width:22px;height:22px}.pagebar .ring::after{width:17px;height:17px}'+
+   '.hec-secs{padding:5px 6px 6px;gap:4px;scrollbar-width:none}.hec-secs::-webkit-scrollbar{display:none}'+
+   '.hec-secs a{max-width:210px;font-size:12.5px;padding:3px 10px 3px 4px}.hec-secs a b{min-width:20px;height:20px}'+
+  '}';
  D.head.appendChild(st);
+ /* long course names get "…" instead of pushing the buttons off a phone screen */
+ (function(b){if(!b)return;[].slice.call(b.childNodes).forEach(function(n){if(n.nodeType===3&&n.textContent.trim()){var s=D.createElement('span');s.className='cm-t';b.replaceChild(s,n);s.appendChild(n)}})})(D.getElementById('cm-btn'));
  /* sticky needs the window to be the scroller: some pages put overflow on body, which silently breaks it */
  try{if(getComputedStyle(D.body).overflowY!=='visible'||getComputedStyle(D.body).overflowX!=='visible'){
   R.style.setProperty('overflow-x','clip','important');D.body.style.setProperty('overflow','visible','important')}}catch(e){}
